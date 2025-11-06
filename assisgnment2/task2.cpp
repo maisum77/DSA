@@ -35,7 +35,7 @@ public:
         return getTotalMarks() / 3;
     }
 
-    // Helper function to display this student's details
+
     void display()
     {
         cout << "  Roll No: " << rollNumber << endl;
@@ -142,7 +142,7 @@ public:
         }
     }
 
-    // e. Display student with highest marks
+
     void displayHighestScorer()
     {
         cout << "\n--- Highest Scoring Student ---" << endl;
@@ -245,7 +245,7 @@ int main()
             break;
 
         case 0:
-            cout << "\nExiting program. Goodbye!" << endl;
+            cout << "\nExiting program" << endl;
             break;
 
         default:

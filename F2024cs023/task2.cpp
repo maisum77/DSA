@@ -1,115 +1,264 @@
 #include <iostream>
+#include <string>
+
 using namespace std;
 
-class Node
+class StudentNode
 {
 public:
-    int bookID;
-    Node *next;
+    int rollNumber;
+    string name;
+    int mathMarks;
+    int scienceMarks;
+    int englishMarks;
+    StudentNode *next;
 
-    Node(int id)
+    // Constructor
+    StudentNode(int roll, string n, int math, int sci, int eng)
     {
-        bookID = id;
+        rollNumber = roll;
+        name = n;
+        mathMarks = math;
+        scienceMarks = sci;
+        englishMarks = eng;
         next = nullptr;
     }
+
+    int getTotalMarks()
+    {
+        return mathMarks + scienceMarks + englishMarks;
+    }
+
+    float getAverage()
+    {
+
+        return getTotalMarks() / 3;
+    }
+
+
+    void display()
+    {
+        cout << "  Roll No: " << rollNumber << endl;
+        cout << "  Name:    " << name << endl;
+        cout << "  Marks (M, S, E): " << mathMarks << ", " << scienceMarks << ", " << englishMarks << endl;
+        cout << "  Total:   " << getTotalMarks() << endl;
+        cout << "  Average: " << getAverage() << "%" << endl;
+    }
 };
 
-class LinkedList
+class StudentList
 {
 private:
-    Node *head;
+    StudentNode *head;
+    StudentNode *tail;
 
 public:
-    LinkedList()
+    StudentList()
     {
-        head = nullptr;
+        head = NULL;
+        tail = NULL;
     }
-    void addAtEnd(int id)
+
+    void addStudent(int roll, string name, int math, int sci, int eng)
     {
-        Node *newNode = new Node(id);
+
+        StudentNode *temp = head;
+        while (temp != NULL)
+        {
+            if (temp->rollNumber == roll)
+            {
+                cout << "Error: Student with Roll No " << roll << " already exists." << endl;
+                return;
+            }
+            temp = temp->next;
+        }
+
+        StudentNode *newNode = new StudentNode(roll, name, math, sci, eng);
+
+        if (head == NULL)
+        {
+            head = newNode;
+            tail = newNode;
+        }
+        else
+        {
+            tail->next = newNode;
+            tail = newNode;
+        }
+        cout << "Added student " << endl;
+    }
+
+    void displayAll()
+    {
+        cout << "\n--- Displaying All Student Records ---" << endl;
+        if (head == NULL)
+        {
+            cout << "The student list is empty." << endl;
+            return;
+        }
+
+        StudentNode *temp = head;
+        while (temp != NULL)
+        {
+            temp->display();
+            cout << "-----------------------------------" << endl;
+            temp = temp->next;
+        }
+    }
+
+    void searchByRoll(int roll)
+    {
+        cout << "\n--- Searching for Roll No: " << roll << " ---" << endl;
+        StudentNode *temp = head;
+        while (temp != NULL)
+        {
+            if (temp->rollNumber == roll)
+            {
+                cout << "Student found:" << endl;
+                temp->display();
+                return;
+            }
+            temp = temp->next;
+        }
+
+        cout << "Student with Roll No " << roll << " was not found." << endl;
+    }
+
+    void calculateAverages()
+    {
+        cout << "\n--- Student Averages ---" << endl;
+        if (head == NULL)
+        {
+            cout << "The student list is empty." << endl;
+            return;
+        }
+
+        StudentNode *temp = head;
+        while (temp != NULL)
+        {
+            cout << "  - " << temp->name << " (Roll: " << temp->rollNumber << "): ";
+            cout << temp->getAverage() << "%" << endl;
+            temp = temp->next;
+        }
+    }
+
+
+    void displayHighestScorer()
+    {
+        cout << "\n--- Highest Scoring Student ---" << endl;
         if (head == nullptr)
         {
-            head = newNode;
-            return;
-        }
-        Node *temp = head;
-        while (temp->next != nullptr)
-        {
-            temp = temp->next;
-        }
-        temp->next = newNode;
-    }
-
-    void insertAtPosition(int id, int position)
-    {
-        Node *newNode = new Node(id);
-
-        if (position == 1)
-        {
-            newNode->next = head;
-            head = newNode;
-            cout << " -> Inserted " << id << " at position 1 (head).\n";
+            cout << "The student list is empty." << endl;
             return;
         }
 
-        Node *temp = head;
-        for (int i = 1; i < position - 1 && temp != nullptr; i++)
+        StudentNode *highestScorer = head;
+        int maxTotal = head->getTotalMarks();
+
+        StudentNode *temp = head->next;
+        while (temp != NULL)
         {
+            int currentTotal = temp->getTotalMarks();
+            if (currentTotal > maxTotal)
+            {
+                maxTotal = currentTotal;
+                highestScorer = temp;
+            }
             temp = temp->next;
         }
-
-        if (temp == nullptr)
-        {
-            cout << " -> Error: Position " << position << " is out of bounds.\n";
-            delete newNode;
-            return;
-        }
-
-        newNode->next = temp->next;
-        temp->next = newNode;
-        cout << " -> Inserted " << id << " at position " << position << ".\n";
-    }
-
-    void displayList()
-    {
-        cout << "List: [ ";
-        Node *temp = head;
-        while (temp != nullptr)
-        {
-            cout << temp->bookID << " -> ";
-            temp = temp->next;
-        }
-        cout << "NULL ]\n";
+        cout << "The student with the highest total marks is:" << endl;
+        highestScorer->display();
     }
 };
+
+void showMenu()
+{
+    cout << "\n===== Student Record Management =====" << endl;
+    cout << "1. Add a new student" << endl;
+    cout << "2. Display all student records" << endl;
+    cout << "3. Search for a student by roll number" << endl;
+    cout << "4. Display average of all students" << endl;
+    cout << "5. Display student with highest marks" << endl;
+    cout << "0. Exit" << endl;
+    cout << "========================================" << endl;
+    cout << "Enter your choice: ";
+}
 
 int main()
 {
-    LinkedList libraryList;
 
-    libraryList.addAtEnd(101);
-    libraryList.addAtEnd(105);
-    libraryList.addAtEnd(110);
-    libraryList.addAtEnd(120);
+    StudentList studentDB;
+    int choice;
+    cout << "--- Loading initial student data... ---" << endl;
+    studentDB.addStudent(101, "Maisum Abbas", 88, 92, 85);
+    studentDB.addStudent(102, "Umair Nadeem", 75, 80, 78);
+    studentDB.addStudent(103, "AON", 95, 98, 99);
+    cout << "---------------------------------------" << endl;
 
-    cout << "Initial Library List:\n";
-    libraryList.displayList();
-    cout << "------------------------------------------\n";
+    do
+    {
+        showMenu();
+        cin >> choice;
+        int roll, math, sci, eng;
+        string name;
 
-    cout << "Task: Inserting Book ID 108 at position 3...\n";
-    libraryList.insertAtPosition(108, 3);
-    libraryList.displayList();
-    cout << "------------------------------------------\n";
+        switch (choice)
+        {
+        case 1:
 
-    cout << "Task: Inserting Book ID 99 at position 1...\n";
-    libraryList.insertAtPosition(99, 1);
-    libraryList.displayList();
-    cout << "------------------------------------------\n";
+            cout << "\n--- Add New Student ---" << endl;
+            cout << "Enter Roll Number: ";
+            cin >> roll;
 
-    cout << "Task: Inserting Book ID 125 at position 7...\n";
-    libraryList.insertAtPosition(125, 7);
-    libraryList.displayList();
-    cout << "------------------------------------------\n";
+            cout << "Enter Name: ";
+            cin.ignore();
+            getline(cin, name);
+
+            cout << "Enter Math Marks: ";
+            cin >> math;
+
+            cout << "Enter Science Marks: ";
+            cin >> sci;
+
+            cout << "Enter English Marks: ";
+            cin >> eng;
+
+            studentDB.addStudent(roll, name, math, sci, eng);
+            break;
+
+        case 2:
+            studentDB.displayAll();
+            break;
+
+        case 3:
+            cout << "Enter Roll Number to search: ";
+            cin >> roll;
+            studentDB.searchByRoll(roll);
+            break;
+
+        case 4:
+            studentDB.calculateAverages();
+            break;
+
+        case 5:
+            studentDB.displayHighestScorer();
+            break;
+
+        case 0:
+            cout << "\nExiting program" << endl;
+            break;
+
+        default:
+            cout << "\nInvalid choice. Please try again." << endl;
+        }
+        if (choice != 0)
+        {
+            cout << "\nPress Enter to continue...";
+            cin.ignore();
+            cin.get();
+        }
+
+    } while (choice != 0);
 
     return 0;
 }
