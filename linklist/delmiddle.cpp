@@ -59,6 +59,10 @@ public:
             temp = temp->next;
         }
     }
+    void reverse()
+    {
+        
+    }
 };
 
 int main()

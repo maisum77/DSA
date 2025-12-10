@@ -1,144 +1,71 @@
 #include <iostream>
 using namespace std;
 
-class Auto{
-public:
-	int chassisID;
-	string name;
-	float capacity;
-	float price;
-	
-	Auto(int i = 0, string n = "", float c = 0.0f, float p = 0.0f){
-		chassisID = i;
-		name = n;
-		capacity = c;
-		price = p;
-	}
-	
-	void display() const{
-		cout<<"ChassisID: "<<chassisID<<endl
-            <<"Name: "<<name<<endl
-            <<"Capacity: "<<capacity<<endl
-            <<"Price: "<<price<<endl;
-	}
+struct Node {
+    int data;
+    Node* next;
+
+    Node(int val) {
+        data = val;
+        next = NULL;
+    }
 };
 
-void sortByPrice(Auto autos[], int count) {
-    for (int i = 0; i < count; i++)
-    {
-        for (int j = 0; j < count; j++)
-        {
-            if(autos[i].price<autos[j].price)
-            {
-                swap(autos[i],autos[j]);
-            }
-        }
-        
+// Function to create a linked list from an array
+Node* createList(int arr[], int n) {
+    Node* head = new Node(arr[0]);
+    Node* temp = head;
+
+    for (int i = 1; i < n; i++) {
+        temp->next = new Node(arr[i]);
+        temp = temp->next;
     }
-    
-	// write your function to sort autos by price
+    return head;
 }
 
-void searchByID(Auto autos[], int count) {
-    int temp;
-    cout<<"Enter the ID: ";
-    cin>>temp;
-    for (int i = 0; i < count; i++)
-    {
-        if (autos[i].chassisID==temp)
-        {
-            autos[i].display();
-        }
+// Function to display a linked list
+void display(Node* head) {
+    Node* temp = head;
+    while (temp != NULL) {
+        cout << temp->data << " -> ";
+        temp = temp->next;
     }
-
-    
-	// write your function to search auto by ID
-	// then call autos[i].display();
+    cout << "NULL" << endl;
 }
 
-void calculateTax(Auto autos[], int count) {
-    
-    for (int i = 0; i < count; i++)
-    {
-       autos[i].price=autos[i].price+(autos[i].price*0.16);
+// Function to display sum of corresponding nodes
+void displaySum(Node* head1, Node* head2) {
+    cout << "Sum of corresponding nodes: ";
+
+    Node* p = head1;
+    Node* q = head2;
+
+    while (p != NULL && q != NULL) {
+        cout << p->data + q->data << " ";
+        p = p->next;
+        q = q->next;
     }
-    // write your function to calculate the tax
-    // then add this tax to your final price amount
+    cout << endl;
 }
 
-void displayByInputPrice(Auto autos[], int count, double minPrice) {
-    for (int i = 0; i < count; i++)
-    {
-       if (autos[i].price>= minPrice)
-       {
-         autos[i].display();
-       }
-       
-    }
-    // write your function to display all autos with price greater than minPrice
-}
+int main() {
 
-int main(){
-	const int count = 6;
-	Auto autos[count] = {
-		Auto(1, "John Deere", 300, 15000),
-		Auto(2, "Soviet Tractor", 250, 14350),
-		Auto(3, "LeBron Coupe", 450, 9599),
-		Auto(4, "Rover", 115, 3599),
-		Auto(5, "Cero", 155, 11000),
-		Auto(6, "VXR", 500, 20000)
-	};
-	
-	int choice;
-	do{
-		cout << "\n===== AUTO DEALERSHIP SYSTEM =====";
-        cout << "\n1. Sort Autos by Price (Ascending)";
-        cout << "\n2. Search Auto by ID";
-        cout << "\n3. Calculate and Add Tax";
-        cout << "\n4. Display Autos with Price < Input";
-        cout << "\n5. Display All Autos";
-        cout << "\n0. Exit";
-        cout << "\nEnter your choice: ";
-        cin >> choice;
-        
-        switch(choice){
-        	case 1:
-                sortByPrice(autos,count);
-        		// call function to Sort by price
-        		cout << "Autos sorted by price successfully.\n";
-        		break;
-        	case 2:
-        		searchByID(autos,count);
-        		// call function to Search by ID
-				break;
-        	case 3:
-                calculateTax(autos,count);
-        		// call function to add tax to price
-        		cout << "Tax added successfully.\n";
-        		break;
-        	case 4:
-        		double minPrice;
-                cout << "Enter minimum price: ";
-                cin >> minPrice;
-                displayByInputPrice(autos,count,minPrice);
-    
-        		// call function to display autos where minPrice > input
-        		cout << "\n\n";
-                break;
-			case 5:
-                for (int i = 0; i < count; i++)
-                {
-                    autos[i].display();
-                }
-                
-				// call function to display all autos
-				cout << "\n\n";
-				break;        		
-		}
-		
-		
-	} while(choice != 0);
-	
-	
-	return 0;
+    int arr1[5] = {1, 3, 5, 7, 9};
+    int arr2[5] = {2, 4, 6, 8, 10};
+
+    // Create two linked lists
+    Node* head1 = createList(arr1, 5);
+    Node* head2 = createList(arr2, 5);
+
+    // Display lists
+    cout << "List 1: ";
+    display(head1);
+
+    cout << "List 2: ";
+    display(head2);
+
+    // Display sum of corresponding nodes
+    displaySum(head1, head2);
+
+    return 0;
 }

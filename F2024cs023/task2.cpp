@@ -2,131 +2,65 @@
 using namespace std;
 
 struct Node {
-    int data;       
-    Node* next;     
+    int data;
+    Node* prev;
+    Node* next;
 
-    Node(int val) : data(val), next(nullptr) {}
+    Node(int val) {
+        data = val;
+        prev = NULL;
+        next = NULL;
+    }
 };
 
+// Function to create a doubly linked list from an array
+Node* createList(int arr[], int n) {
+    Node* head = new Node(arr[0]);
+    Node* temp = head;
 
-void push(Node*& head, int val) {
-    Node* newNode = new Node(val);
-    newNode->next = head;
-    head = newNode;
+    for (int i = 1; i < n; i++) {
+        Node* newNode = new Node(arr[i]);
+        temp->next = newNode;
+        newNode->prev = temp;
+        temp = newNode;
+    }
+    return head;
 }
 
-
-void displayList(Node* head) {
-    if (head == nullptr) {
-        cout << "[Empty List]" << std::endl;
-        return;
-    }
-    
+// Display list forward
+void display(Node* head) {
     Node* temp = head;
-    while (temp != nullptr) {
-        cout << temp->data;
-        if (temp->next != nullptr) {
-            cout << " → ";
-        }
+    cout << "Doubly Linked List: ";
+    while (temp != NULL) {
+        cout << temp->data << " <-> ";
         temp = temp->next;
     }
-    cout << std::endl;
+    cout << "NULL" << endl;
 }
 
-
-void deleteFromBeginning(Node*& head) {
-    if (head == nullptr) {
-        cout << "List is already empty." << std::endl;
-        return;
-    }
-
+// Display square of each element
+void displaySquares(Node* head) {
     Node* temp = head;
-    head = head->next;
-    delete temp;
-}
-
-
-void deleteFromEnd(Node*& head) {
-    if (head == nullptr) {
-        cout << "List is already empty." << std::endl;
-        return;
+    cout << "Square of each element: ";
+    while (temp != NULL) {
+        cout << (temp->data * temp->data) << " ";
+        temp = temp->next;
     }
-
-    if (head->next == nullptr) {
-        delete head;
-        head = nullptr;
-        return;
-    }
-
-    Node* secondLast = head;
-    while (secondLast->next->next != nullptr) {
-        secondLast = secondLast->next;
-    }
-
-    delete secondLast->next;    
-    secondLast->next = nullptr; 
-}
-
-
-void deleteAtPosition(Node*& head, int position) {
-    if (head == nullptr) {
-        cout << "List is empty." << std::endl;
-        return;
-    }
-
-    if (position == 1) {
-        deleteFromBeginning(head); 
-        return;
-    }
-
-    
-    Node* prev = head;
-    for (int count = 1; prev != nullptr && count < position - 1; ++count) {
-        prev = prev->next;
-    }
-
-    
-    if (prev == nullptr || prev->next == nullptr) {
-        cout << "Position " << position << " is out of bounds." << std::endl;
-        return;
-    }
-
-   
-    Node* nodeToDelete = prev->next;
-    prev->next = nodeToDelete->next; 
-    delete nodeToDelete;             
+    cout << endl;
 }
 
 int main() {
-    Node* head = nullptr; 
 
-   
-    push(head, 50);
-    push(head, 40);
-    push(head, 30);
-    push(head, 20);
-    push(head, 10);
+    int arr[5] = {2, 4, 6, 8, 10};
 
-    cout << "Initial List:" << std::endl;
-    displayList(head);
-    cout << "---" << std::endl;
+    // Create doubly linked list
+    Node* head = createList(arr, 5);
 
-    cout << "After deleting from beginning:" << std::endl;
-    deleteFromBeginning(head);
-    displayList(head);
-    cout << "---" << std::endl;
+    // Display the list
+    display(head);
 
-    cout << "After deleting from end:" << std::endl;
-    deleteFromEnd(head);
-    displayList(head);
-    cout << "---" << std::endl;
-
-    cout << "After deleting from position 2:" << std::endl;
-    deleteAtPosition(head, 2); // Deletes '30'
-    displayList(head);
-    cout << "---" << std::endl;
-
-    
+    // Display squares of each element
+    displaySquares(head);
 
     return 0;
 }
