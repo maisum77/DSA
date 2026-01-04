@@ -1,32 +1,105 @@
 #include <iostream>
 #include <vector>
+#include <string>
+
 using namespace std;
 
-class MinHeap {
-    vector<int> v;
-    void down(int i) {
-        int low = i, l = 2*i+1, r = 2*i+2;
-        if (l < v.size() && v[l] < v[low]) low = l;
-        if (r < v.size() && v[r] < v[low]) low = r;
-        if (low != i) { swap(v[i], v[low]); down(low); }
+class PasswordManager {
+private:
+    vector<string> usernames;
+    vector<unsigned long> hashes;
+    
+    unsigned long hashFunction(string password) {
+        unsigned long hash = 5381;
+        for (int i = 0; i < password.length(); i++) {
+            hash = ((hash << 5) + hash) + password[i];
+        }
+        return hash;
     }
+    
+    int findUser(string username) {
+        for (int i = 0; i < usernames.size(); i++) {
+            if (usernames[i] == username) return i;
+        }
+        return -1;
+    }
+
 public:
-    void insert(int s) {
-        v.push_back(s);
-        int i = v.size()-1;
-        while (i && v[(i-1)/2] > v[i]) { swap(v[i], v[(i-1)/2]); i = (i-1)/2; }
+    void addUser(string username, string password) {
+        if (findUser(username) != -1) {
+            cout << "Username already exists." << endl;
+            return;
+        }
+        if (username.empty() || password.empty()) {
+            cout << "Invalid input." << endl;
+            return;
+        }
+        usernames.push_back(username);
+        hashes.push_back(hashFunction(password));
+        cout << "User added." << endl;
     }
-    int extract() {
-        int m = v[0]; v[0] = v.back(); v.pop_back();
-        if(!v.empty()) down(0);
-        return m;
+    
+    bool verifyUser(string username, string password) {
+        int index = findUser(username);
+        if (index == -1) return false;
+        return hashes[index] == hashFunction(password);
     }
-    void display() { for(int x: v) cout << x << "KB "; cout << endl; }
+    
+    void displayUsers() {
+        if (usernames.empty()) {
+            cout << "No users." << endl;
+            return;
+        }
+        cout << "Users:" << endl;
+        for (int i = 0; i < usernames.size(); i++) {
+            cout << usernames[i] << endl;
+        }
+    }
 };
-int main()
-{
-    MinHeap memory;
-    memory.insert(128); memory.insert(64); memory.insert(256);
-    cout << "Available Blocks: "; memory.display();
-    cout << "Allocating Smallest: " << memory.extract() << "KB\n\n";
+
+int main() {
+    PasswordManager pm;
+    int option;
+    string user, pass;
+    
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Add User\n";
+        cout << "2. Login\n";
+        cout << "3. Display Users\n";
+        cout << "0. Exit\n";
+        cout << "Enter choice: ";
+        cin >> option;
+        
+        switch(option) {
+            case 1:
+                cout << "Enter username: ";
+                cin >> user;
+                cout << "Enter password: ";
+                cin >> pass;
+                pm.addUser(user, pass);
+                break;
+            case 2:
+                cout << "Enter username: ";
+                cin >> user;
+                cout << "Enter password: ";
+                cin >> pass;
+                if (pm.verifyUser(user, pass)) {
+                    cout << "Login successful." << endl;
+                } else {
+                    cout << "Invalid credentials." << endl;
+                }
+                break;
+            case 3:
+                pm.displayUsers();
+                break;
+            case 0:
+                cout << "Exiting." << endl;
+                break;
+            default:
+                cout << "Invalid option." << endl;
+        }
+    } while (option != 0);
+    
+    return 0;
 }
