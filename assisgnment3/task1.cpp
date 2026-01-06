@@ -32,7 +32,7 @@ public:
     char pop()
     {
         if (isEmpty())
-            return '\0';
+            return '0';
         Node *temp = top;
         char val = temp->data;
         top = top->next;
